@@ -212,6 +212,10 @@ void zeroPoleGain(Polynom<TypeOfClass> P,
 {
 
 }
+template <typename Type>
+Type *polydiv(const Type *num,const Type *den,const unsigned &numSize,const unsigned &denSize);
 
+template <typename Type>
+LinAlg::Matrix<Type> Roots(const Type *num,const unsigned &numSize);
 
 #endif // POLYNOM_H
