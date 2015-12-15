@@ -205,7 +205,7 @@ LinAlg::Matrix<Type> LinAlg::Hess (const LinAlg::Matrix<Type>& matrix_to_reduce)
 }
 
 template <typename Type>
-LinAlg::Matrix<Type> LinAlg::EigenValues(const LinAlg::Matrix<Type> &matrix_to_get_eigenvalues, unsigned iterations = 200)
+LinAlg::Matrix<Type> LinAlg::EigenValues(const LinAlg::Matrix<Type> &matrix_to_get_eigenvalues, unsigned iterations = 100)
 {
     LinAlg::Matrix<Type> ret(matrix_to_get_eigenvalues), temp = LinAlg::Eye<Type>(ret.getNumberOfRows());
 
@@ -217,9 +217,9 @@ LinAlg::Matrix<Type> LinAlg::EigenValues(const LinAlg::Matrix<Type> &matrix_to_g
     {
         LinAlg::Matrix<Type> Q, R;
 
-        LinAlg::QR(ret, Q, R);
+        LinAlg::QR(ret - ret(ret.getNumberOfColumns(),ret.getNumberOfColumns())*temp, Q, R);
 
-        ret = R*Q;
+        ret = R*Q + ret(ret.getNumberOfColumns(),ret.getNumberOfColumns())*temp;
     }
 
 
@@ -252,6 +252,8 @@ LinAlg::Matrix<Type> LinAlg::EigenValues(const LinAlg::Matrix<Type> &matrix_to_g
 
     return Raizes;
 }
+
+
 
 template <class Type>
 Type *LinAlg::MultPoly(const Type *lhs, const Type *rhs, const unsigned &lhsSize, const  unsigned  &rhsSize)
