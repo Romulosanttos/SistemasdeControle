@@ -4,7 +4,7 @@
 #define SWAP
 
 #include "matrix.h"
-#include <complex>//numeros complexos
+
 #include <cfloat>
 
 namespace LinAlg {
@@ -31,6 +31,7 @@ namespace LinAlg {
 
     template<typename Type>
     LinAlg::Matrix<Type> Hessemberg_Form (const LinAlg::Matrix<Type>& matrix_to_reduce);
+
 
     //Simplified away to call Hessemberg_Form.
     template<typename Type>
