@@ -1,4 +1,4 @@
-falta add ao git a função polydiv em linalg.hpp e em linalg.h
+ add ao git a função polydiv em linalg.hpp e em linalg.h
 
 BUGS EM MATRIX 
 
