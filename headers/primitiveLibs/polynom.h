@@ -90,11 +90,11 @@ namespace PolynomHandler {
     template <class Type> // com defeito
     Type *MultPoly(const Type *lhs, const Type *rhs, const unsigned &lhsSize, const unsigned &rhsSize);
 
-    template <typename Type>
+    template <typename Type>// com defeito
     Type *polydiv(const Type *num,const Type *den,const unsigned &numSize,const unsigned &denSize);//sincronizado
 
     template <typename Type>
-    LinAlg::Matrix<Type> Roots(const Type *num,const unsigned &numSize);//sincronizado
+    LinAlg::Matrix<Type> *Roots(const Type *num,const unsigned &numSize);//sincronizado
 
 
 //    template <class Type>

@@ -590,11 +590,7 @@ bool PolynomHandler::VefDen(const Type *den1, const Type *den2, const unsigned s
     return vef;
 }
 
-template <typename Type>
-bool PolynomHandler::isDivisible(const Type *lhs, const Type *rhs, const unsigned &lhsSize, const unsigned &rhsSize)
-{
 
-}
 
 template <typename Type>
 Type* PolynomHandler::initPointer(const unsigned &Size)
@@ -642,21 +638,24 @@ Type *PolynomHandler::MultPoly(const Type *lhs, const Type *rhs, const unsigned 
 }
 
 template <class Type>
-Type *PolynomHandler::polydiv(const Type *num,const Type *den,const unsigned &numSize,const unsigned &denSize)
+Type PolynomHandler::polydiv(const Type *num,const Type *den,const unsigned &numSize,const unsigned &denSize)
 {
-    LinAlg::Matrix<Type> poly_num = Roots(num, numSize);
-    LinAlg::Matrix<Type> poly_den = Roots(den, denSize);
+    LinAlg::Matrix<Type> poly_num(numSize,2) ;
+    LinAlg::Matrix<Type> poly_den(denSize,2);
+    poly_num= PolynomHandler::Roots  (num, numSize);
+    poly_den= PolynomHandler::Roots  (den, denSize);
     LinAlg::Matrix<Type> AltoVn(numSize+1,2);//auto valor de poly_num
     LinAlg::Matrix<Type> AltoVd(denSize+1,2);//auto valor de poly_den
     Type poliVn[numSize];//vetores depois de comparada
     Type poliVd[denSize];//vetores depois de comparada
+    Type *ret;
+    LinAlg::Matrix<Type>rootNum = poly_num||(LinAlg::Eye<Type> (numSize-2) | LinAlg::Zeros<Type> (numSize-2,1));
 
-    Type *ret[numSize+denSize];
 //    std::cout << poly_num << std::endl;
 //    std::cout << poly_den << std::endl;
 
-//    AltoVn = LinAlg::EigenValues(poly_num);
-//    AltoVd = LinAlg::EigenValues(poly_den);
+    AltoVn = LinAlg::EigenValues(poly_num);
+    AltoVd = LinAlg::EigenValues(poly_den);
 
     std::cout<<AltoVn ;
     std::cout<<AltoVd ;
@@ -669,8 +668,8 @@ Type *PolynomHandler::polydiv(const Type *num,const Type *den,const unsigned &nu
             poliVd[i+1]=AltoVn(i+1,2);
         }
     }
-    int tam1=(poly_den.getNumberOfColumns()*poly_den.getNumberOfRows());
-    int tam2=(poly_num.getNumberOfColumns()*poly_num.getNumberOfRows());
+    unsigned tam1=((poly_den.getNumberOfColumns())*(poly_den.getNumberOfRows()));
+    unsigned tam2=(poly_num.getNumberOfColumns()*poly_num.getNumberOfRows());
     for(unsigned i = 0;i<tam1+tam2;i++){
         poliVd[i]=AltoVd(i+1,1);
         poliVd[i+1]=AltoVd(i+1,2);

@@ -470,6 +470,7 @@ template<typename Type> template<typename RightType>
 LinAlg::Matrix<Type>& LinAlg::Matrix<Type>::operator*= (const LinAlg::Matrix<RightType>& rhs)
 {
 
+
     if ((this->rows == 1) && (this->columns == 1))
     {
         *this = this->mat[0][0] * rhs;
@@ -478,17 +479,34 @@ LinAlg::Matrix<Type>& LinAlg::Matrix<Type>::operator*= (const LinAlg::Matrix<Rig
     {
         Type temp;
         LinAlg::Matrix<Type> tempMat(*this);
-        this->Init(this->rows, rhs.getNumberOfColumns());
+        this->Init(this->rows, rhs.getNumberOfColumns());//aqui ele zera o rhs, se o rhs for = lhs. E SE TIRALO ELE NÃO FUNCIONA
 
-        for(unsigned i = 0; i < tempMat.rows; i++)
+        for(unsigned i = 0; i < tempMat.rows; i++){
+            std::cout<<"1 for "<<i<<std::endl;
+            std::cout<<"B"<<std::endl;
+            std::cout<<rhs<<std::endl;
+            std::cout<<"A"<<std::endl;
+            std::cout<<*this<<std::endl;
             for(unsigned col = 0; col < rhs.getNumberOfColumns(); col++)
             {
+                std::cout<<"2 for "<<col<<std::endl;
+                std::cout<<"B"<<std::endl;
+                std::cout<<rhs<<std::endl;
+                std::cout<<"A"<<std::endl;
+                std::cout<<*this<<std::endl;
                 temp = 0;
                 for(unsigned j = 0; j < tempMat.columns; j++)
                     temp += tempMat.mat[i][j] * rhs(j + 1, col + 1);
                 this->mat[i][col] = temp;
             }
+            std::cout<<i<<" "<<std::endl;
+        }
     }
+    std::cout<<"depois"<<std::endl;
+    std::cout<<"B"<<std::endl;
+    std::cout<<rhs<<std::endl;
+    std::cout<<"A"<<std::endl;
+    std::cout<<*this<<std::endl;
 
     return *this;
 }

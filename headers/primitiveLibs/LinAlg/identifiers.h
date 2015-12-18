@@ -8,7 +8,7 @@ namespace Identifiers{
         unsigned interval;
     };
     struct from{
-        from(unsigned interval) : interval(interval) {}
+        from(unsigned interval) : interval(interval) {}//+-
 
         unsigned interval;
 
