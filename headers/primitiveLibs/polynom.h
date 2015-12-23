@@ -37,7 +37,7 @@ namespace PolynomHandler {
 
             PolynomHandler::Polynom<Type>& operator+= (const Type& rhs /*scalar*/); //testada
             template<typename RightType> // com defeito
-            PolynomHandler::Polynom<Type>& operator+= (const PolynomHandler::Polynom<RightType>& rhs);
+            PolynomHandler::Polynom<Type>& operator+= (const PolynomHandler::Polynom<RightType>& rhs);//main feita
 //            friend Polynom<Type> operator+(Type scalar, Polynom<Type> P){return P+scalar;}
 
 //            Polynom<Type> operator-(Polynom<Type> P);
