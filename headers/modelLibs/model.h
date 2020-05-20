@@ -1,44 +1,95 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include <cfloat>
-#include "SistemasdeControle/headers/primitiveLibs/LinAlg/matrix.h"
+#ifdef testModel
+    #include "../../../headers/primitiveLibs/LinAlg/matrix.h"
+    #include "../../../headers/primitiveLibs/LinAlg/linalg.h"
+    #include "../../../headers/primitiveLibs/polynom.h"
+#else
+    #include "SistemasdeControle/headers/primitiveLibs/LinAlg/matrix.h"
+    #include "SistemasdeControle/headers/primitiveLibs/LinAlg/linalg.h"
+    #include "SistemasdeControle/headers/primitiveLibs/polynom.h"
+#endif
 
-template <class UsedType>
-class Model
-{
-protected:
-    Model<UsedType> *instance;
-    UsedType         input,output,    lmin,lmax,     step;
-    LinAlg::Matrix<UsedType> Input,Output,    EstOutput,     ModelCoef,
-                     LinearVectorA, LinearEqualityVectorB, LinearMatrixA,
-                     LinearEqualityB, InputLinearVector, OutputLinearVector;
-public:
-    Model();
-    UsedType diff(UsedType x);
-    void setStep(UsedType step);
-    void setInstance(Model<UsedType> *m);
-    void setModelCoef(LinAlg::Matrix<UsedType> coef);
-    void setIO(LinAlg::Matrix<UsedType> in, LinAlg::Matrix<UsedType> out);
 
-    LinAlg::Matrix<UsedType> getModelCoef();
-    LinAlg::Matrix<UsedType> getInputMatrix();
-    UsedType getOutput();
-    LinAlg::Matrix<UsedType> getOutputMatrix();
-    LinAlg::Matrix<UsedType> getLinearMatrixA();
-    LinAlg::Matrix<UsedType> getLinearEqualityB();
-    LinAlg::Matrix<UsedType> getLinearVectorA();
-    LinAlg::Matrix<UsedType> getLinearEqualityVectorB();
+namespace ModelHandler {
+    template <typename Type>
+    class Model
+    {
+    public:
+        Model(): input(0), output(0), step(1){}
+        virtual ~Model();
 
-    virtual UsedType         sim(UsedType x) = 0;
-    virtual UsedType         sim(UsedType x, UsedType y) = 0;
-    virtual LinAlg::Matrix<UsedType> sim(LinAlg::Matrix<UsedType> x) = 0;
-    virtual LinAlg::Matrix<UsedType> sim(LinAlg::Matrix<UsedType> x, LinAlg::Matrix<UsedType> y) = 0;
-    virtual LinAlg::Matrix<UsedType> sim(UsedType lsim, UsedType lmax, UsedType step) = 0;
+        void setStep(Type step);
+        void setModelCoef(LinAlg::Matrix<Type> coef);
+        void setIO(LinAlg::Matrix<Type> in, LinAlg::Matrix<Type> out);
+        void setIO(Type in, Type out);
+        void setLimits(Type lmin, Type lmax){this->lmin = lmin; this->lmax = lmax;}
+        void setTimeSimulation(Type timeSimulation){this->timeSimulation = timeSimulation;}
 
-    virtual void print()=0;
-    virtual void setLinearVector(LinAlg::Matrix<UsedType> Input, LinAlg::Matrix<UsedType> Output) = 0;
-    virtual void setLinearModel(LinAlg::Matrix<UsedType> Input, LinAlg::Matrix<UsedType> Output)=0;
+        Type getStep() const;
+        Type getSingleInput() const { return this->input;}
+        Type getSingleOutput() const { return this->output;}
+        Type getSingleEstOutput() const { return this->estOutput;}
+        Type getLmin() const { return this->lmin;}
+        Type getLmax() const { return this->lmax;}
 
-};
+        LinAlg::Matrix<Type> getModelCoef() const;
+        LinAlg::Matrix<Type> getInputMatrix() const;
+        LinAlg::Matrix<Type> getOutputMatrix() const;
+        LinAlg::Matrix<Type> getEstOutputMatrix() const {return this->EstOutput;}
+        LinAlg::Matrix<Type> getLinearVectorA() const;
+        LinAlg::Matrix<Type> getLinearMatrixA() const;
+        LinAlg::Matrix<Type> getLinearEqualityB() const;
+        LinAlg::Matrix<Type> getLinearEqualityVectorB() const;
+        LinAlg::Matrix< LinAlg::Matrix<Type>* >* getLinearSystem() const;
+
+        virtual Type         sim(Type x) = 0;
+        virtual Type         sim(Type x, Type y) = 0;
+        virtual LinAlg::Matrix<Type> sim(LinAlg::Matrix<Type> x) = 0;
+        virtual LinAlg::Matrix<Type> sim(Type lmin, Type lmax, Type step) = 0;
+        virtual LinAlg::Matrix<Type> sim(LinAlg::Matrix<Type> x, LinAlg::Matrix<Type> y) = 0;
+
+        virtual std::string print()=0;
+        virtual unsigned getNumberOfVariables() const = 0;
+        virtual unsigned getNumberOfInputs() const = 0;
+        virtual unsigned getNumberOfOutputs() const = 0;
+        virtual void setLinearVector(LinAlg::Matrix<Type> Input, LinAlg::Matrix<Type> Output) = 0;
+        virtual void setLinearModel(LinAlg::Matrix<Type> Input, LinAlg::Matrix<Type> Output) = 0;
+
+    protected:
+//        virtual bool isFunction() = 0;
+        Type                 input, output, estOutput, lmin, lmax, step, timeSimulation, delay;
+        LinAlg::Matrix<Type> Input,    Output,      EstOutput,       ModelCoef,
+                         LinearVectorA,   LinearEqualityVectorB, LinearMatrixA,
+                         LinearEqualityB, InputLinearVector, OutputLinearVector;
+
+    };
+
+    template<typename Type> // implementar
+    std::ostream& operator<< (std::ostream& output, ModelHandler::Model<Type> *model);
+    template<typename Type> // implementar
+    std::string&  operator<< (std::string& output,  ModelHandler::Model<Type> *model);
+
+    template<typename Type> // implementar
+    Type sim(const ModelHandler::Model<Type> *model, Type x);
+    template<typename Type> // implementar
+    Type sim(const ModelHandler::Model<Type> *model, Type x, Type y);
+    template<typename Type> // implementar
+    LinAlg::Matrix<Type> sim(const ModelHandler::Model<Type> *model, LinAlg::Matrix<Type> X);
+    template<typename Type> // implementar
+    LinAlg::Matrix<Type> sim(const ModelHandler::Model<Type> *model, Type lsim, Type lmax, Type step);
+    template<typename Type> // implementar
+    LinAlg::Matrix<Type> sim(const ModelHandler::Model<Type> *model, LinAlg::Matrix<Type> X, LinAlg::Matrix<Type> Y);
+
+    template <typename Type>
+    Type diff(const ModelHandler::Model<Type> *model, Type x);
+}
+
+#ifdef testModel
+    #include "../../../src/modelLibs/model.hpp"
+#else
+    #include "SistemasdeControle/src/modelLibs/model.hpp"
+#endif
 
 #endif // MODEL_H
